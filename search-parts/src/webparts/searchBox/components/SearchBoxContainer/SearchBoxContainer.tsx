@@ -69,11 +69,11 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
                     if (!isOpen || (isOpen && highlightedIndex === null)) {
                       if (event.keyCode === 13) {
-                        // Submit search on "Enter" 
+                        // Submit search on "Enter"
                         this._onSearch(this.state.searchInputValue);
                       }
                       else if (event.keyCode === 27) {
-                        // Clear search on "Escape" 
+                        // Clear search on "Escape"
                         this._onSearch('', true);
                       }
                     }
@@ -130,24 +130,24 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     }
 
     return  <div className={ styles.searchFieldGroup }>
-              <TextField 
+              <TextField
                 className={ styles.searchTextField }
                 placeholder={ this.props.placeholderText ? this.props.placeholderText : strings.SearchInputPlaceholder }
                 value={ this.state.searchInputValue }
-                onChange={ (ev, value) => {
+                onChange={ (ev) => {
                   this.setState({
-                    searchInputValue: value,
+                    searchInputValue: ev.currentTarget.value,
                     showClearButton: true
                   });
                 }}
                 onKeyDown={ (event) => {
 
                     if (event.keyCode === 13) {
-                      // Submit search on "Enter" 
+                      // Submit search on "Enter"
                       this._onSearch(this.state.searchInputValue);
                     }
                     else if (event.keyCode === 27) {
-                      // Clear search on "Escape" 
+                      // Clear search on "Escape"
                       this._onSearch('', true);
                     }
 
@@ -169,7 +169,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
    * @param highlightedIndex downshift highlightedIndex callback
    */
   private renderSuggestions(getItemProps, selectedItem, highlightedIndex): JSX.Element {
-    
+
     let renderSuggestions: JSX.Element = null;
     let suggestions: JSX.Element[] = null;
 
@@ -206,7 +206,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                                       </Label>
                                   </div>;
                                 });
-      
+
       renderSuggestions = <div className={styles.suggestionPanel}>
                             { suggestions }
                           </div>;
@@ -217,7 +217,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
 
   /**
    * Handler when a user enters new keywords in the search box input
-   * @param inputValue 
+   * @param inputValue
    */
   private async _onChange(inputValue: string) {
 
@@ -241,14 +241,14 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           });
 
         } catch(error) {
-          
+
           this.setState({
             errorMessage: error.message,
             proposedQuerySuggestions: [],
             isRetrievingSuggestions: false
           });
         }
-        
+
       } else {
 
         // Clear suggestions history
@@ -278,14 +278,14 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     const termToSuggestFromIndex = this.state.searchInputValue.indexOf(this.state.termToSuggestFrom);
     let replacedSearchInputvalue =  this._replaceAt(this.state.searchInputValue, termToSuggestFromIndex, suggestion);
 
-    // Remove inenr HTML markup if there is 
+    // Remove inenr HTML markup if there is
     replacedSearchInputvalue = replacedSearchInputvalue.replace(/(<B>|<\/B>)/g,"");
 
     this.setState({
       searchInputValue: replacedSearchInputvalue,
       selectedQuerySuggestions: update(this.state.selectedQuerySuggestions, { $push: [suggestion]}),
       proposedQuerySuggestions:[],
-    });     
+    });
   }
 
   private _replaceAt(string: string, index: number, replace: string) {
@@ -296,7 +296,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
    * Handler when a user enters new keywords
    * @param queryText The query text entered by the user
    */
-  public async _onSearch(queryText: string, isReset: boolean = false) {    
+  public async _onSearch(queryText: string, isReset: boolean = false) {
 
     // Don't send empty value
     if (queryText || isReset) {
@@ -318,7 +318,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           let enhancedQuery = await this.props.NlpService.enhanceSearchQuery(queryText, this.props.isStaging);
           query.enhancedQuery = enhancedQuery.enhancedQuery;
 
-          enhancedQuery.entities.map((entity) => {          
+          enhancedQuery.entities.map((entity) => {
           });
 
           this.setState({
@@ -326,9 +326,9 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
           });
 
         } catch (error) {
-          
+
           // In case of failure, use the non-optimized query instead
-          query.enhancedQuery = queryText;  
+          query.enhancedQuery = queryText;
         }
       }
 
@@ -346,7 +346,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
         // Send the query to the new page
         const behavior = this.props.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
         window.open(searchUrl.href, behavior);
-        
+
       } else {
 
         // Notify the dynamic data controller
@@ -369,7 +369,7 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                               null;
 
     if (this.state.errorMessage) {
-      renderErrorMessage = <MessageBar messageBarType={ MessageBarType.error } 
+      renderErrorMessage = <MessageBar messageBarType={ MessageBarType.error }
                                         dismissButtonAriaLabel='Close'
                                         isMultiline={ false }
                                         onDismiss={ () => {
@@ -380,10 +380,10 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
                                         className={styles.errorMessage}>
                                         { this.state.errorMessage }</MessageBar>;
     }
-    
-    const renderSearchBox = this.props.enableQuerySuggestions ? 
-                          this.renderSearchBoxWithAutoComplete() : 
-                          this.renderBasicSearchBox();    
+
+    const renderSearchBox = this.props.enableQuerySuggestions ?
+                          this.renderSearchBoxWithAutoComplete() :
+                          this.renderBasicSearchBox();
     return (
       <div className={styles.searchBox}>
         { renderErrorMessage }
