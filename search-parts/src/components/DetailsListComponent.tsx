@@ -6,7 +6,7 @@ import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { ISearchResult } from '../models/ISearchResult';
 import * as Handlebars from 'handlebars';
 import { ShimmeredDetailsList } from 'office-ui-fabric-react/lib/ShimmeredDetailsList';
-import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IReadonlyTheme } from '../helpers/IReadonlyTheme';
 import { IconComponent } from './IconComponent';
 import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
@@ -37,14 +37,12 @@ const classNames = mergeStyleSets({
     controlWrapper: {
         display: 'flex',
         flexWrap: 'wrap'
+    },
+    textField: {
+      margin: '0 30px 20px 0',
+      maxWidth: '300px'
     }
 });
-const controlStyles = {
-    root: {
-        margin: '0 30px 20px 0',
-        maxWidth: '300px'
-    }
-};
 
 export interface IDetailsListColumnConfiguration {
 
@@ -220,7 +218,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                             renderColumnValue = <span title={!hasError ? value : ''} dangerouslySetInnerHTML={{ __html: value }}></span>;
 
-                            // Make the value clickable to the corresponding result item 
+                            // Make the value clickable to the corresponding result item
                             if (column.isResultItemLink) {
                                 renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path}>{renderColumnValue}</a>;
                             }
@@ -243,9 +241,10 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
         let renderFilter: JSX.Element = null;
 
+        // VALIDATE: TextFields styling
         if (this.props.enableFiltering) {
             renderFilter = <div className={classNames.controlWrapper}>
-                <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} styles={controlStyles} />;
+                <TextField label="Filter by name:" onChange={this._onChangeText.bind(this)} className={classNames.textField} />;
       </div>;
         }
 
@@ -303,7 +302,7 @@ function _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending?: boo
 export class DetailsListWebComponent extends BaseWebComponent {
 
   public constructor() {
-     super(); 
+     super();
   }
 
   public connectedCallback() {
