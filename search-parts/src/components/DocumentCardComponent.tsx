@@ -60,7 +60,7 @@ export interface IDocumentCardComponentState {
 
 export class DocumentCardComponent extends React.Component<IDocumentCardComponentProps, IDocumentCardComponentState> {
 
-    private documentCardPreviewRef = React.createRef<HTMLDivElement>();
+    private documentCardPreviewRef?: HTMLDivElement = undefined;
 
     public constructor(props: IDocumentCardComponentProps) {
         super(props);
@@ -81,11 +81,12 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
 
         if (this.state.showCallout && processedProps.previewUrl && this.props.enablePreview) {
 
+            // VALIDATE: Value of documentCardPreviewRef
             renderPreviewCallout = <PreviewContainer
                 elementUrl={processedProps.previewUrl}
                 previewImageUrl={processedProps.previewImage}
                 previewType={processedProps.isVideo ? PreviewType.Video : PreviewType.Document}
-                targetElement={this.documentCardPreviewRef.current}
+                targetElement={this.documentCardPreviewRef}
                 showPreview={this.state.showCallout}
                 videoProps={{
                     fileExtension: processedProps.fileExtension
@@ -169,7 +170,7 @@ export class DocumentCardComponent extends React.Component<IDocumentCardComponen
                 styles={documentCardStyles}
                 type={this.props.isCompact ? DocumentCardType.compact : DocumentCardType.normal}
             >
-                <div ref={this.documentCardPreviewRef} style={{ position: 'relative', height: '100%' }}>
+                <div ref={(el) => this.documentCardPreviewRef = el} style={{ position: 'relative', height: '100%' }}>
                     {this.props.isVideo ?
                         <div style={playButtonStyles}>
                             <i className="ms-Icon ms-Icon--Play ms-font-xl" aria-hidden="true"></i>
