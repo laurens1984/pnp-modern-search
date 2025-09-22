@@ -18,7 +18,7 @@ import {
     PropertyPaneHorizontalRule,
     PropertyPaneDropdown,
     IPropertyPaneDropdownOption
-} from "@microsoft/sp-property-pane";
+} from '@microsoft/sp-webpart-base';
 import * as strings from 'SearchResultsWebPartStrings';
 import SearchResultsContainer from './components/SearchResultsContainer/SearchResultsContainer';
 import { ISearchResultsWebPartProps } from './ISearchResultsWebPartProps';

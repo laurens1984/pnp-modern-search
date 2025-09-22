@@ -10,7 +10,7 @@ import {
     PropertyPaneDropdown,
     PropertyPaneTextField,
     PropertyPaneToggle
-} from "@microsoft/sp-property-pane";
+} from '@microsoft/sp-webpart-base';
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import * as strings from 'SearchRefinersWebPartStrings';
 import { IRefinementFilter, IRefinementResult } from '../../models/ISearchResult';

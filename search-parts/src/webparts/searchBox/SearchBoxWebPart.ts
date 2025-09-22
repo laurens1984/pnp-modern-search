@@ -5,19 +5,19 @@ import {
   BaseClientSideWebPart,
   IWebPartPropertiesMetadata,
 } from '@microsoft/sp-webpart-base';
-import { 
-  IPropertyPaneConfiguration, 
-  IPropertyPaneField, 
-  PropertyPaneCheckbox, 
-  PropertyPaneDropdown, 
-  PropertyPaneDynamicField, 
-  PropertyPaneDynamicFieldSet, 
+import {
+  IPropertyPaneConfiguration,
+  IPropertyPaneField,
+  PropertyPaneCheckbox,
+  PropertyPaneDropdown,
+  PropertyPaneDynamicField,
+  PropertyPaneDynamicFieldSet,
   PropertyPaneHorizontalRule,
-  PropertyPaneLabel, 
-  PropertyPaneTextField, 
-  PropertyPaneToggle, 
-  DynamicDataSharedDepth 
-} from "@microsoft/sp-property-pane";
+  PropertyPaneLabel,
+  PropertyPaneTextField,
+  PropertyPaneToggle,
+  DynamicDataSharedDepth
+} from '@microsoft/sp-webpart-base';
 import * as strings from 'SearchBoxWebPartStrings';
 import ISearchBoxWebPartProps from './ISearchBoxWebPartProps';
 import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsoft/sp-dynamic-data';

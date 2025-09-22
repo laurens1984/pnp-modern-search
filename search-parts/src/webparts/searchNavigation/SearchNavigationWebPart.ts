@@ -3,7 +3,7 @@ import * as ReactDom from 'react-dom';
 import { Version, DisplayMode } from '@microsoft/sp-core-library';
 import { DynamicProperty } from '@microsoft/sp-component-base';
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
-import { IPropertyPaneConfiguration, PropertyPaneDropdown, PropertyPaneToggle, IPropertyPaneField, PropertyPaneTextField } from "@microsoft/sp-property-pane";
+import { IPropertyPaneConfiguration, PropertyPaneDropdown, PropertyPaneToggle, IPropertyPaneField, PropertyPaneTextField } from '@microsoft/sp-webpart-base';
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 import * as strings from 'SearchNavigationWebPartStrings';
 import SearchNavigation from './components/SearchNavigationContainer/SearchNavigationContainer';
