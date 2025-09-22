@@ -333,13 +333,13 @@ abstract class BaseTemplateService {
             }
         });
 
-        // Register slider component as partial 
+        // Register slider component as partial
         let sliderTemplate = Handlebars.compile(`<pnp-slider-component items="{{items}}" options="{{options}}" template="{{@partial-block}}"></pnp-slider-component>`);
         Handlebars.registerPartial('slider', sliderTemplate);
 
         // Register live persona wrapper as partial
         let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona upn="{{upn}}" disable-hover="{{disableHover}}" template="{{@partial-block}}"></live-persona>`);
-        Handlebars.registerPartial('livepersona', livePersonaTemplate);        
+        Handlebars.registerPartial('livepersona', livePersonaTemplate);
     }
 
     public async optimizeLoadingForTemplate(templateContent: string): Promise<void> {
@@ -674,11 +674,14 @@ abstract class BaseTemplateService {
 
         DomHelper.forEach(nodes, ((index, el) => {
             el.addEventListener("click", (event) => {
-                const thumbnailElt = event.srcElement;
+                // VALIDATE: Make sure event target is an Element and we can use 'event.target'
+                if (event.target instanceof Element == false) return; // for TS strict null checks
+
+                const thumbnailElt = event.target;
 
                 // Get infos about the document to preview
-                const url: string = event.srcElement.getAttribute("data-url");
-                const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                const url: string = thumbnailElt.getAttribute("data-url");
+                const previewImgUrl: string = thumbnailElt.getAttribute("data-src");
 
                 if (url) {
                     let renderElement = React.createElement(
@@ -703,13 +706,15 @@ abstract class BaseTemplateService {
 
         DomHelper.forEach(nodes, ((index, el) => {
             el.addEventListener("click", (event) => {
+                // VALIDATE: Make sure event target is an Element and we can use 'event.target'
+                if (event.target instanceof Element == false) return; // for TS strict null checks
 
-                const thumbnailElt = event.srcElement;
+                const thumbnailElt = event.target;
 
                 // Get infos about the video to render
-                const url = event.srcElement.getAttribute("data-url");
-                const fileExtension = event.srcElement.getAttribute("data-fileext");
-                const previewImgUrl: string = event.srcElement.getAttribute("data-src");
+                const url = thumbnailElt.getAttribute("data-url");
+                const fileExtension = thumbnailElt.getAttribute("data-fileext");
+                const previewImgUrl: string = thumbnailElt.getAttribute("data-src");
 
                 if (url && fileExtension) {
                     let renderElement = React.createElement(

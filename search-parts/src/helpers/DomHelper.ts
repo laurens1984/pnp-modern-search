@@ -8,20 +8,20 @@ export class DomHelper {
      * Iterates over a list of DOM nodes (https://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/)
      * @param array the node list to browse
      * @param callback the callback function
-     * @param scope the scope 
+     * @param scope the scope
      */
-    public static forEach(array, callback, scope?) {
+    public static forEach(array: NodeListOf<Element>, callback: (index: number, element: Element) => void, scope?: unknown) {
         for (var i = 0; i < array.length; i++) {
-            callback.call(scope, i, array[i]); 
+            callback.call(scope, i, array[i]);
         }
     }
 
     /**
      * Inserts a DOM element after an other
-     * @param el the dom element to insert 
+     * @param el the dom element to insert
      * @param referenceNode the parent node to insert after
      */
-    public static insertAfter(el, referenceNode) {
+    public static insertAfter(el: Element, referenceNode: Element) {
         referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
     }
 }
