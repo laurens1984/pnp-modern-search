@@ -17,7 +17,7 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
     if (!config.production) {
         //https://spblog.net/post/2019/09/18/spfx-overclockers-or-how-to-significantly-improve-your-sharepoint-framework-build-performance#h_296972879501568737888136
         log(`[${colors.cyan('configure-webpack')}] Turning off ${colors.cyan('tslint')}...`);
-        build.tslintCmd.enabled = false;
+        build.tslint.enabled = false;
     }
     build.configureWebpack.mergeConfig({
         additionalConfiguration: (generatedConfiguration) => {
