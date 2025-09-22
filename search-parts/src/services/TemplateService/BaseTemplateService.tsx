@@ -12,16 +12,16 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import PreviewContainer from '../../controls/PreviewContainer/PreviewContainer';
 import { IPreviewContainerProps, PreviewType } from '../../controls/PreviewContainer/IPreviewContainerProps';
-import { IPropertyPaneField } from '@microsoft/sp-property-pane';
+import { IPropertyPaneField } from '@microsoft/sp-webpart-base';
 import ResultsLayoutOption from '../../models/ResultsLayoutOption';
 import { ISearchResultsWebPartProps } from '../../webparts/searchResults/ISearchResultsWebPartProps';
 import { IComboBoxOption } from 'office-ui-fabric-react/lib/ComboBox';
 import { IComponentFieldsConfiguration, TemplateService } from './TemplateService';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { ThemeProvider, IReadonlyTheme } from '@microsoft/sp-component-base';
 import groupBy from 'handlebars-group-by';
 import { Loader } from './LoadHelper';
 import { IComponentDefinition } from '../ExtensibilityService/IComponentDefinition';
+import { DefaultTheme, IReadonlyTheme } from '../../helpers/IReadonlyTheme';
 
 abstract class BaseTemplateService {
 
@@ -319,9 +319,7 @@ abstract class BaseTemplateService {
      */
     public registerWebComponents(webComponents: IComponentDefinition<any>[]) {
 
-        // Added theme variant to be available in components
-        const themeProvider = this._ctx.serviceScope.consume(ThemeProvider.serviceKey);
-        const themeVariant = themeProvider.tryGetTheme();
+        const themeVariant = DefaultTheme;
 
         // Registers custom HTML elements
         webComponents.map(wc => {
