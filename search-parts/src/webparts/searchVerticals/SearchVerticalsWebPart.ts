@@ -14,7 +14,7 @@ import { ISearchVertical } from '../../models/ISearchVertical';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
 import ISearchResultSourceData from '../../models/ISearchResultSourceData';
-import { DynamicProperty, ThemeProvider, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
+import { DynamicProperty } from '@microsoft/sp-component-base';
 import { cloneDeep } from '@microsoft/sp-lodash-subset';
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 
@@ -25,7 +25,6 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
   private _dynamicDataService: IDynamicDataService;
   private _searchResultSourceData: DynamicProperty<ISearchResultSourceData>;
   private _selectedVertical: ISearchVertical;
-  private _themeProvider: ThemeProvider;
 
   public constructor() {
     super();
@@ -43,9 +42,9 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
       // If the dynamic property exists, it means the Web Part ins connected to a search results Web Part
       if (this._searchResultSourceData) {
         const searchResultSourceData: ISearchResultSourceData = this._searchResultSourceData.tryGetValue();
-  
+
         if (searchResultSourceData) {
-  
+
           if (searchResultSourceData.verticalsInformation) {
             // Updated vertical counts
             searchVerticals = searchVerticals.map(configuredVertical => {
@@ -53,7 +52,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
               if (verticalInfo.length > 0) {
                 configuredVertical.count = verticalInfo[0].Count;
               }
-  
+
               return configuredVertical;
             });
           }
@@ -104,7 +103,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     switch (propertyId) {
 
       case SearchComponentType.SearchVerticalsWebPart:
-            return { 
+            return {
               selectedVertical: this._selectedVertical,
               verticalsConfiguration: this.properties.verticals,
               showCounts: this.properties.showCounts
@@ -119,8 +118,6 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
 
     this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
     this.ensureDataSourceConnection();
-
-    this.initThemeVariant();
 
     this.properties.verticals = this.properties.verticals ? this.properties.verticals : [];
 
@@ -171,7 +168,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     if (this.properties.searchResultsDataSourceReference) {
       this.ensureDataSourceConnection();
     }
-    
+
     if (propertyPath.localeCompare('verticals') === 0) {
 
       // Generate an unique key for verticals to be able to identify them precisely in sub components instead using the vertical display name (can be duplicated).
@@ -219,7 +216,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
                 title: strings.PropertyPane.Verticals.Fields.ResultSource,
                 type: this._customCollectionFieldType.string,
                 required: false,
-                
+
             },
             {
                 id: 'iconName',
@@ -240,7 +237,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
     }
 
     if (this.properties.showCounts) {
-      settingFields.push(      
+      settingFields.push(
         PropertyPaneDropdown('searchResultsDataSourceReference', {
         options: this._dynamicDataService.getAvailableDataSourcesByType(SearchComponentType.SearchResultsWebPart),
         label: strings.PropertyPane.SearchResultsDataSource.PropertyLabel
@@ -252,7 +249,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
   }
 
   private onVerticalSelected(itemKey: string): void {
-    
+
     // Retrieve the search vertical using this id
     const verticals = this.properties.verticals.filter(vertical => {
       return vertical.key === itemKey;
@@ -265,7 +262,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
   }
 
   /**
-   * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options 
+   * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options
    */
   private ensureDataSourceConnection() {
 
@@ -278,7 +275,7 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
 
       this._searchResultSourceData.setReference(this.properties.searchResultsDataSourceReference);
       this._searchResultSourceData.register(this.render);
-      
+
     } else {
       if (this._searchResultSourceData) {
         this._searchResultSourceData.unregister(this.render);
@@ -291,25 +288,5 @@ export default class SearchVerticalsWebPart extends BaseClientSideWebPart<ISearc
    */
   private _setupWebPart() {
     this.context.propertyPane.open();
-  }
-
-  /**
-   * Initializes theme variant properties
-   */
-  private initThemeVariant(): void {
-
-    // Consume the new ThemeProvider service
-    this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
-
-    // Register a handler to be notified if the theme variant changes
-    this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
-  }
-
-  /**
-   * Update the current theme variant reference and re-render.
-   * @param args The new theme
-   */
-  private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-      this.render();
   }
 }

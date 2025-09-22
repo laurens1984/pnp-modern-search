@@ -6,7 +6,7 @@ import ISortableFieldConfiguration from '../../../../models/ISortableFieldConfig
 import { ISearchResultType } from '../../../../models/ISearchResultType';
 import {ICustomTemplateFieldValue} from '../../../../services/ResultService/ResultService';
 import SearchResultsOperationCallback from '../../../../models/SearchResultsOperationCallback';
-import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { IReadonlyTheme } from '../../../../helpers/IReadonlyTheme';
 
 interface ISearchResultsContainerProps {
 
@@ -50,7 +50,7 @@ interface ISearchResultsContainerProps {
      */
     showBlank: boolean;
 
-    /** 
+    /**
      * The current display mode of Web Part
      */
     displayMode: DisplayMode;
@@ -60,7 +60,7 @@ interface ISearchResultsContainerProps {
      */
     templateService: TemplateService;
 
-    /** 
+    /**
      * The template raw content to display
      */
     templateContent: string;
@@ -85,13 +85,13 @@ interface ISearchResultsContainerProps {
      */
     currentUICultureName: string;
 
-    /** 
-     * The configured result types 
+    /**
+     * The configured result types
      */
     resultTypes: ISearchResultType[];
 
     /**
-     * The name of the CustomAction that should render this data. 
+     * The name of the CustomAction that should render this data.
      */
     rendererId: string;
 
@@ -116,7 +116,7 @@ interface ISearchResultsContainerProps {
      */
     onSearchResultsUpdate: SearchResultsOperationCallback;
 
-    /* 
+    /*
      * The selected page to show for the search results
      */
     selectedPage: number;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version, DisplayMode } from '@microsoft/sp-core-library';
-import { DynamicProperty, ThemeChangedEventArgs, ThemeProvider } from '@microsoft/sp-component-base';
+import { DynamicProperty } from '@microsoft/sp-component-base';
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { IPropertyPaneConfiguration, PropertyPaneDropdown, PropertyPaneToggle, IPropertyPaneField, PropertyPaneTextField } from "@microsoft/sp-property-pane";
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
@@ -21,15 +21,14 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
     private _propertyFieldColorPickerStyle;
     private _dynamicDataService: IDynamicDataService;
     private _queryKeywordsSourceData: DynamicProperty<ISearchQuery>;
-    private _themeProvider: ThemeProvider;
 
     public render(): void {
         let renderElement: JSX.Element = React.createElement('div', null);
 
-        if (this.properties.queryKeywordsDataSourceReference 
-            && this._queryKeywordsSourceData 
-            && this.properties.nodes 
-            && this.properties.nodes.length > 0) 
+        if (this.properties.queryKeywordsDataSourceReference
+            && this._queryKeywordsSourceData
+            && this.properties.nodes
+            && this.properties.nodes.length > 0)
         {
             let queryKeywords = "";
             let queryKeywordsData = this._queryKeywordsSourceData.tryGetValue();
@@ -81,8 +80,6 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
     protected onInit(): Promise<void> {
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this.ensureDataSourceConnection();
-
-        this.initThemeVariant();
 
         this.properties.passQuery = (this.properties.passQuery !== undefined && this.properties.passQuery !== null) ? this.properties.passQuery : true;
         this.properties.queryPathBehavior = (this.properties.queryPathBehavior !== undefined && this.properties.queryPathBehavior !== null) ? this.properties.queryPathBehavior : QueryPathBehavior.QueryParameter;
@@ -171,7 +168,7 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
                 label: strings.UseNlpValueLabel,
             })
         ];
-    
+
         return searchNavigationConfigFields;
     }
 
@@ -195,7 +192,7 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
               key: 'colorFieldId',
             }));
         }
-    
+
         return searchNavigationColorFields;
     }
 
@@ -236,7 +233,7 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
                         if (value === null ||
                           value.trim().length === 0) {
                           return strings.SearchBoxQueryParameterNotEmpty;
-                        }              
+                        }
                       }
                       return '';
                     }
@@ -244,15 +241,15 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
                 );
             }
         }
-    
+
         return searchNavigationBehaviorFields;
     }
 
     /**
-     * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options 
+     * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options
      */
     private ensureDataSourceConnection() {
-        
+
         if (this.properties.queryKeywordsDataSourceReference) {
             // Register the data source manually since we don't want user select properties manually
             if (!this._queryKeywordsSourceData) {
@@ -261,7 +258,7 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
 
             this._queryKeywordsSourceData.setReference(this.properties.queryKeywordsDataSourceReference);
             this._queryKeywordsSourceData.register(this.render);
-            
+
         } else {
             if (this._queryKeywordsSourceData) {
                 this._queryKeywordsSourceData.unregister(this.render);
@@ -273,25 +270,5 @@ export default class SearchNavigationWebPart extends BaseClientSideWebPart<ISear
         if (propertyPath.localeCompare('queryKeywordsDataSourceReference') === 0) {
             this.ensureDataSourceConnection();
         }
-    }
-
-    /**
-     * Initializes theme variant properties
-     */
-    private initThemeVariant(): void {
-
-        // Consume the new ThemeProvider service
-        this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
-
-        // Register a handler to be notified if the theme variant changes
-        this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
-    }
-
-    /**
-     * Update the current theme variant reference and re-render.
-     * @param args The new theme
-     */
-    private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-        this.render();
     }
 }

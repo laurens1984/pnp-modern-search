@@ -44,7 +44,7 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition } from '@microsof
 import { IRefinementFilter, ISearchVerticalInformation } from '../../models/ISearchResult';
 import IDynamicDataService from '../../services/DynamicDataService/IDynamicDataService';
 import { DynamicDataService } from '../../services/DynamicDataService/DynamicDataService';
-import { DynamicProperty, ThemeProvider, IReadonlyTheme, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
+import { DynamicProperty } from '@microsoft/sp-component-base';
 import IRefinerSourceData from '../../models/IRefinerSourceData';
 import IRefinerConfiguration from '../../models/IRefinerConfiguration';
 import { SearchComponentType } from '../../models/SearchComponentType';
@@ -62,6 +62,7 @@ import { ExtensibilityService } from '../../services/ExtensibilityService/Extens
 import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
 import { IComponentDefinition } from '../../services/ExtensibilityService/IComponentDefinition';
 import { AvailableComponents } from '../../components/AvailableComponents';
+import { DefaultTheme, IReadonlyTheme } from '../../helpers/IReadonlyTheme';
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -107,8 +108,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
      */
     private _availableManagedProperties: IComboBoxOption[];
 
-    private _themeProvider: ThemeProvider;
-    private _themeVariant: IReadonlyTheme;
+    private _themeVariant: IReadonlyTheme = DefaultTheme;
     private _initComplete = false;
 
     /**
@@ -314,9 +314,6 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.initializeRequiredProperties();
 
-        // Get current theme info
-        this.initThemeVariant();
-
         if (Environment.type === EnvironmentType.Local) {
             this._taxonomyService = new MockTaxonomyService();
             this._templateService = new MockTemplateService(this.context.pageContext.cultureInfo.currentUICultureName);
@@ -359,15 +356,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         // Load extensibility additions
         if (extensibilityLibrary) {
-            
+
             // Add custom web components if any
-            this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());          
+            this.availableWebComponentDefinitions = this.availableWebComponentDefinitions.concat(extensibilityLibrary.getCustomWebComponents());
         }
-        
+
         // Set the default search results layout
         this.properties.selectedLayout = (this.properties.selectedLayout !== undefined && this.properties.selectedLayout !== null) ? this.properties.selectedLayout : ResultsLayoutOption.DetailsList;
 
-        // Registers web components 
+        // Registers web components
         this._templateService.registerWebComponents(this.availableWebComponentDefinitions);
 
         this.context.dynamicDataSourceManager.initializeSource(this);
@@ -1525,31 +1522,5 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         // Refresh all fields so other property controls can use the new list
         this.context.propertyPane.refresh();
         this.render();
-    }
-
-    /**
-     * Initializes theme variant properties
-     */
-    private initThemeVariant(): void {
-        // Consume the new ThemeProvider service
-        this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
-
-        // If it exists, get the theme variant
-        this._themeVariant = this._themeProvider.tryGetTheme();
-
-        // Register a handler to be notified if the theme variant changes
-        this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
-    }
-
-    /**
-     * Update the current theme variant reference and re-render.
-     * @param args The new theme
-     */
-    private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-        
-        if (!isEqual(this._themeVariant, args.theme)) {
-            this._themeVariant = args.theme;
-            this.render();
-        }
     }
 }

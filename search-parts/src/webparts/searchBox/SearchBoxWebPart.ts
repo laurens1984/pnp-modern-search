@@ -33,7 +33,6 @@ import NlpService from '../../services/NlpService/NlpService';
 import { PageOpenBehavior, QueryPathBehavior } from '../../helpers/UrlHelper';
 import SearchBoxContainer from './components/SearchBoxContainer/SearchBoxContainer';
 import { SearchComponentType } from '../../models/SearchComponentType';
-import { ThemeProvider, ThemeChangedEventArgs } from '@microsoft/sp-component-base';
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -41,7 +40,6 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
   private _searchService: ISearchService;
   private _serviceHelper: ServiceHelper;
   private _nlpService: INlpService;
-  private _themeProvider: ThemeProvider;
 
   constructor() {
     super();
@@ -60,14 +58,14 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     let inputValue = this.properties.defaultQueryKeywords.tryGetValue();
 
     if (inputValue && typeof(inputValue) === 'string') {
-      
+
       // Notify subscriber a new value if available
       this._searchQuery.rawInputValue = decodeURIComponent(inputValue);
       this.context.dynamicDataSourceManager.notifyPropertyChanged('searchQuery');
     }
-    
+
     const element: React.ReactElement<ISearchBoxContainerProps> = React.createElement(
-      SearchBoxContainer, { 
+      SearchBoxContainer, {
         onSearch: this._onSearch,
         searchInNewPage: this.properties.searchInNewPage,
         pageUrl: this.properties.pageUrl,
@@ -110,7 +108,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
       switch (propertyId) {
 
           case 'searchQuery':
-          
+
               const annotatedPropertyValue = {
                   sampleValue: {
                       'rawInputValue': "*",
@@ -134,7 +132,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * @param propertyId ID of the dynamic data set to retrieve the value for
    */
   public getPropertyValue(propertyId: string) {
-        
+
     switch (propertyId) {
 
         case 'searchQuery':
@@ -149,11 +147,9 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
 
     this._serviceHelper = new ServiceHelper(this.context.httpClient);
     this.context.dynamicDataSourceManager.initializeSource(this);
-    
+
     this.initSearchService();
     this.initNlpService();
-
-    this.initThemeVariant();
 
     this._bindHashChange();
 
@@ -199,7 +195,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     if (!this.properties.useDynamicDataSource) {
       this.properties.defaultQueryKeywords.setValue("");
     }
-    
+
     this._bindHashChange();
   }
 
@@ -216,17 +212,17 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * Verifies if the string is a correct URL
    * @param value the URL to verify
    */
-  private _validatePageUrl(value: string) {    
-    
+  private _validatePageUrl(value: string) {
+
     if ((!/^(https?):\/\/[^\s/$.?#].[^\s]*/.test(value) || !value) && this.properties.searchInNewPage) {
       return strings.SearchBoxUrlErrorMessage;
     }
-    
+
     return '';
   }
 
   /**
-   * Ensures the service URL is valid 
+   * Ensures the service URL is valid
    * @param value the service URL
    */
   private async _validateServiceUrl(value: string) {
@@ -251,12 +247,12 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * Initializes the query suggestions data provider instance according to the current environnement
    */
   private initSearchService() {
-      
+
       if (this.properties.enableQuerySuggestions) {
         if (Environment.type === EnvironmentType.Local ) {
           this._searchService = new MockSearchService();
         } else {
-          this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);        
+          this._searchService = new SearchService(this.context.pageContext, this.context.spHttpClient);
         return "";
       }
     }
@@ -289,7 +285,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
    * Determines the group fields for the search query options inside the property pane
    */
   private _getSearchQueryFields(): IPropertyPaneField<any>[] {
-      
+
     // Sets up search query fields
     let searchQueryConfigFields: IPropertyPaneField<any>[] = [
         PropertyPaneCheckbox('useDynamicDataSource', {
@@ -306,7 +302,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             PropertyPaneDynamicField('defaultQueryKeywords', {
               label: strings.DynamicData.DefaultQueryKeywordsPropertyLabel,
             })
-          ],          
+          ],
           sharedConfiguration: {
             depth: DynamicDataSharedDepth.Source,
           }
@@ -376,7 +372,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
               if (value === null ||
                 value.trim().length === 0) {
                 return strings.SearchBoxQueryParameterNotEmpty;
-              }              
+              }
             }
             return '';
           }
@@ -433,27 +429,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
         // Manually subscribe to hash change since the default property doesn't
         window.addEventListener('hashchange', this.render);
     } else {
-        window.removeEventListener('hashchange', this.render); 
+        window.removeEventListener('hashchange', this.render);
     }
-  }
-
-  /**
-   * Initializes theme variant properties
-   */
-  private initThemeVariant(): void {
-
-    // Consume the new ThemeProvider service
-    this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
-
-    // Register a handler to be notified if the theme variant changes
-    this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
-  }
-
-  /**
-   * Update the current theme variant reference and re-render.
-   * @param args The new theme
-   */
-  private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
-      this.render();
   }
 }

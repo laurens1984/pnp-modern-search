@@ -19,7 +19,7 @@ import { IDynamicDataCallables, IDynamicDataPropertyDefinition, IDynamicDataSour
 import { ISearchRefinersWebPartProps } from './ISearchRefinersWebPartProps';
 import { Placeholder } from '@pnp/spfx-controls-react/lib/Placeholder';
 import IRefinerSourceData from '../../models/IRefinerSourceData';
-import { DynamicProperty, ThemeChangedEventArgs, ThemeProvider } from '@microsoft/sp-component-base';
+import { DynamicProperty } from '@microsoft/sp-component-base';
 import { SearchComponentType } from '../../models/SearchComponentType';
 import RefinersLayoutOption from '../../models/RefinersLayoutOptions';
 import { ISearchRefinersContainerProps } from './components/SearchRefinersContainer/ISearchRefinersContainerProps';
@@ -42,7 +42,6 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     private _selectedFilters: IRefinementFilter[] = [];
     private _searchResultSourceData: DynamicProperty<ISearchResultSourceData>;
     private _searchService: ISearchService;
-    private _themeProvider: ThemeProvider;
 
     /**
      * The list of available managed managed properties (managed globally for all proeprty pane fiels if needed)
@@ -145,7 +144,6 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     protected onInit(): Promise<void> {
 
         this._initializeRequiredProperties();
-        this.initThemeVariant();
 
         this._dynamicDataService = new DynamicDataService(this.context.dynamicDataProvider);
         this.ensureDataSourceConnection();
@@ -298,7 +296,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
      */
     private _getStylingFields(): IPropertyPaneField<any>[] {
 
-        // Options for the search results layout 
+        // Options for the search results layout
         const layoutOptions = [
             {
                 iconProps: {
@@ -355,7 +353,7 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
     }
 
     /**
-     * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options 
+     * Make sure the dynamic property is correctly connected to the source if a search results component has been selected in options
      */
     private ensureDataSourceConnection() {
 
@@ -455,28 +453,8 @@ export default class SearchRefinersWebPart extends BaseClientSideWebPart<ISearch
         // Save the value in the root Web Part class to avoid fetching it again if the property list is requested again by any other property pane control
         this._availableManagedProperties = cloneDeep(properties);
 
-        // Refresh all fields so other property controls can use the new list 
+        // Refresh all fields so other property controls can use the new list
         this.context.propertyPane.refresh();
-        this.render();
-    }
-
-    /**
-     * Initializes theme variant properties
-     */
-    private initThemeVariant(): void {
-
-        // Consume the new ThemeProvider service
-        this._themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
-
-        // Register a handler to be notified if the theme variant changes
-        this._themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent.bind(this));
-    }
-
-    /**
-     * Update the current theme variant reference and re-render.
-     * @param args The new theme
-     */
-    private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
         this.render();
     }
 }
